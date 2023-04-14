@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
+import { debounce } from '@mui/material';
 
 export interface GithubRepository {
   id: number;
@@ -18,12 +19,12 @@ const githubRepositorySchema = z.object({
   stargazers_count: z.number(),
 });
 
-const useGithubRepositories = (search: string) => {
+const useGithubRepositories = (searchQuery: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
   const { data, refetch } = useQuery(
-    ['searchRepositories', search],
+    ['searchRepositories', searchQuery],
     async () => {
       setIsLoading(true);
 
@@ -32,7 +33,7 @@ const useGithubRepositories = (search: string) => {
       try {
         const response = await fetch(
           `https://api.github.com/search/repositories?q=${encodeURIComponent(
-            search
+            searchQuery
           )}`,
           { headers: { Accept: 'application/vnd.github+json' } }
         );
@@ -49,10 +50,20 @@ const useGithubRepositories = (search: string) => {
     { enabled: false }
   );
 
-  useEffect(() => {
-    if (search) refetch();
-  }, [search, refetch]);
+  // add debounce to prevent unnecessary requests as the user types
+  const debouncedRefetch = useCallback(debounce(refetch, 300), [refetch]);
 
+  // refetch when the search query changes
+  useEffect(() => {
+    if (!searchQuery) return;
+
+    // we don't need to await the refetch here, so we can ignore the eslint warning
+    // noinspection JSIgnoredPromiseFromCall
+    debouncedRefetch();
+  }, [searchQuery, debouncedRefetch]);
+
+  // parse the data and ensure that it matches the schema (this way we
+  // can be sure that the ts types match the underlying data)
   useEffect(() => {
     if (!data) return;
 
