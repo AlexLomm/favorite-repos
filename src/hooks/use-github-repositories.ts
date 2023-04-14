@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { debounce } from '@mui/material';
@@ -20,32 +20,19 @@ const githubRepositorySchema = z.object({
 });
 
 const useGithubRepositories = (searchQuery: string) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
-  const { data, refetch } = useQuery(
+  const { data, refetch, isLoading } = useQuery(
     ['searchRepositories', searchQuery],
     async () => {
-      setIsLoading(true);
+      const response = await fetch(
+        `https://api.github.com/search/repositories?q=${encodeURIComponent(
+          searchQuery
+        )}`,
+        { headers: { Accept: 'application/vnd.github+json' } }
+      );
 
-      let data;
-
-      try {
-        const response = await fetch(
-          `https://api.github.com/search/repositories?q=${encodeURIComponent(
-            searchQuery
-          )}`,
-          { headers: { Accept: 'application/vnd.github+json' } }
-        );
-
-        data = await response.json();
-      } catch (error) {
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-
-      return data;
+      return await response.json();
     },
     { enabled: false }
   );
