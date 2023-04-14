@@ -28,8 +28,7 @@ const useGithubRepositories = (searchQuery: string) => {
       const response = await fetch(
         `https://api.github.com/search/repositories?q=${encodeURIComponent(
           searchQuery
-        )}`,
-        { headers: { Accept: 'application/vnd.github+json' } }
+        )}`
       );
 
       return await response.json();
