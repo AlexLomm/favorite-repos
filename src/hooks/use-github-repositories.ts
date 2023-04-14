@@ -1,40 +1,32 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { z } from 'zod';
 import { debounce } from '@mui/material';
 
-export interface GithubRepository {
-  id: number;
-  name: string;
-  description: string;
-  language: string;
-  stargazers_count: number;
-}
+import getGithubRepositoriesByQuery from '../api/get-github-repositories-by-query';
+import { GithubRepository } from '../models/github-repository';
 
-const githubRepositorySchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  description: z.string().nullable(),
-  language: z.string().nullable(),
-  stargazers_count: z.number(),
-});
-
-const useGithubRepositories = (searchQuery: string) => {
+/**
+ * A custom hook that searches for GitHub repositories based on a search query.
+ * This hook debounces the search with a delay of 300ms to reduce unnecessary requests.
+ */
+const useGithubRepositories = (
+  /** The search query used to search for GitHub repositories. */
+  searchQuery: string
+): {
+  /** A boolean indicating whether the data is being fetched */
+  isLoading: boolean;
+  /** An array of GithubRepository objects matching the search query */
+  repositories: GithubRepository[];
+  /** A function to clear the list of repositories */
+  clear: () => void;
+} => {
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
   const clear = useCallback(() => setRepositories([]), []);
 
-  const { data, refetch, isFetching } = useQuery(
+  const { data, refetch, isFetching } = useQuery<GithubRepository[]>(
     ['searchRepositories', searchQuery],
-    async () => {
-      const response = await fetch(
-        `https://api.github.com/search/repositories?q=${encodeURIComponent(
-          searchQuery
-        )}`
-      );
-
-      return await response.json();
-    },
+    async () => getGithubRepositoriesByQuery(searchQuery),
     { enabled: false }
   );
 
@@ -51,16 +43,10 @@ const useGithubRepositories = (searchQuery: string) => {
     debouncedRefetch();
   }, [searchQuery, debouncedRefetch]);
 
-  // parse the data and ensure that it matches the schema (this way we
-  // can be sure that the ts types match the underlying data)
   useEffect(() => {
     if (!data) return;
 
-    const parsedData = data.items.map((repo: unknown) =>
-      githubRepositorySchema.parse(repo)
-    );
-
-    setRepositories(parsedData);
+    setRepositories(data);
   }, [data]);
 
   return { isLoading: isFetching, repositories, clear };

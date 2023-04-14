@@ -1,8 +1,9 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { useState } from 'react';
 
-import useGithubRepositories from '../hooks/use-github-repositories';
-import GithubRepositoriesSearchItem from './GithubRepositoriesSearchItem';
+import useGithubRepositories from '../../hooks/use-github-repositories';
+import GithubRepositoryCard from '../../components/GithubRepositoryCard';
+import addGithubRepositoryToServer from '../../api/add-github-repository-to-server';
 
 const GithubRepositoriesSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,6 +17,7 @@ const GithubRepositoriesSearch = () => {
       options={repositories}
       renderInput={(params) => <TextField {...params} label="Search" />}
       loading={isLoading}
+      clearOnBlur={false}
       onInputChange={(_, value) => {
         if (!value) {
           clear();
@@ -25,12 +27,14 @@ const GithubRepositoriesSearch = () => {
 
         setSearchQuery(value);
       }}
-      clearOnBlur={false}
-      getOptionLabel={(githubRepository) => githubRepository.name}
+      getOptionLabel={({ fullName }) => fullName}
       renderOption={(htmlProps, githubRepository) => (
-        <GithubRepositoriesSearchItem
+        <GithubRepositoryCard
           key={githubRepository.id}
           githubRepository={githubRepository}
+          onClick={(githubRepository) =>
+            addGithubRepositoryToServer(githubRepository)
+          }
         />
       )}
     />

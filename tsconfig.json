@@ -17,7 +17,7 @@
     "jsx": "react-jsx",
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "types": ["@emotion/react/types/css-prop"]
+    "types": ["node", "@emotion/react/types/css-prop"]
   },
   "include": ["src"],
   "references": [

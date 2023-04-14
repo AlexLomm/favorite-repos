@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from '@emotion/react';
 
-import GithubRepositoriesSearch from '../../components/GithubRepositoriesSearch';
+import GithubRepositoriesSearch from './GithubRepositoriesSearch';
 
 const Home = () => {
   return (
