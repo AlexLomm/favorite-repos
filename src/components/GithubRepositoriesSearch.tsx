@@ -14,7 +14,7 @@ const GithubRepositoriesSearch = () => {
       id="repositories"
       sx={{ width: 300 }}
       options={repositories}
-      renderInput={(params) => <TextField {...params} label="Repository" />}
+      renderInput={(params) => <TextField {...params} label="Search" />}
       loading={isLoading}
       onInputChange={(_, value) => {
         if (!value) return;
