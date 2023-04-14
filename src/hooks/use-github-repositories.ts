@@ -22,7 +22,7 @@ const githubRepositorySchema = z.object({
 const useGithubRepositories = (searchQuery: string) => {
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
-  const { data, refetch, isLoading } = useQuery(
+  const { data, refetch, isFetching } = useQuery(
     ['searchRepositories', searchQuery],
     async () => {
       const response = await fetch(
@@ -38,6 +38,7 @@ const useGithubRepositories = (searchQuery: string) => {
   );
 
   // add debounce to prevent unnecessary requests as the user types
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedRefetch = useCallback(debounce(refetch, 300), [refetch]);
 
   // refetch when the search query changes
@@ -54,14 +55,14 @@ const useGithubRepositories = (searchQuery: string) => {
   useEffect(() => {
     if (!data) return;
 
-    const parsedData = data.map((repo: unknown) =>
+    const parsedData = data.items.map((repo: unknown) =>
       githubRepositorySchema.parse(repo)
     );
 
     setRepositories(parsedData);
   }, [data]);
 
-  return { isLoading, repositories };
+  return { isLoading: isFetching, repositories };
 };
 
 export default useGithubRepositories;
