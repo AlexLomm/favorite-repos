@@ -22,6 +22,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Global
       styles={css`
+        * {
+          box-sizing: border-box;
+        }
+
         body {
           min-height: 100vh;
           min-width: 100vw;
