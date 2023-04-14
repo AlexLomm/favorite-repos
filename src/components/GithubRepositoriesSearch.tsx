@@ -6,7 +6,7 @@ import GithubRepositoriesSearchItem from './GithubRepositoriesSearchItem';
 
 const GithubRepositoriesSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { isLoading, repositories } = useGithubRepositories(searchQuery);
+  const { isLoading, repositories, clear } = useGithubRepositories(searchQuery);
 
   return (
     <Autocomplete
@@ -17,10 +17,15 @@ const GithubRepositoriesSearch = () => {
       renderInput={(params) => <TextField {...params} label="Search" />}
       loading={isLoading}
       onInputChange={(_, value) => {
-        if (!value) return;
+        if (!value) {
+          clear();
+
+          return;
+        }
 
         setSearchQuery(value);
       }}
+      clearOnBlur={false}
       getOptionLabel={(githubRepository) => githubRepository.name}
       renderOption={(htmlProps, githubRepository) => (
         <GithubRepositoriesSearchItem

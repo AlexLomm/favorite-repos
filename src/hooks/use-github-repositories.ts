@@ -22,6 +22,8 @@ const githubRepositorySchema = z.object({
 const useGithubRepositories = (searchQuery: string) => {
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
+  const clear = useCallback(() => setRepositories([]), []);
+
   const { data, refetch, isFetching } = useQuery(
     ['searchRepositories', searchQuery],
     async () => {
@@ -61,7 +63,7 @@ const useGithubRepositories = (searchQuery: string) => {
     setRepositories(parsedData);
   }, [data]);
 
-  return { isLoading: isFetching, repositories };
+  return { isLoading: isFetching, repositories, clear };
 };
 
 export default useGithubRepositories;
