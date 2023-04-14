@@ -19,21 +19,32 @@ const githubRepositorySchema = z.object({
 });
 
 const useGithubRepositories = (search: string) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [repositories, setRepositories] = useState<GithubRepository[]>([]);
 
   const { data, refetch } = useQuery(
     ['searchRepositories', search],
     async () => {
-      const response = await fetch(
-        `https://api.github.com/search/repositories?q=${encodeURIComponent(
-          search
-        )}`,
-        { headers: { Accept: 'application/vnd.github+json' } }
-      );
+      setIsLoading(true);
 
-      const responseData = await response.json();
+      let data;
 
-      return responseData.items;
+      try {
+        const response = await fetch(
+          `https://api.github.com/search/repositories?q=${encodeURIComponent(
+            search
+          )}`,
+          { headers: { Accept: 'application/vnd.github+json' } }
+        );
+
+        data = await response.json();
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+
+      return data;
     },
     { enabled: false }
   );
@@ -52,7 +63,7 @@ const useGithubRepositories = (search: string) => {
     setRepositories(parsedData);
   }, [data]);
 
-  return repositories;
+  return { isLoading, repositories };
 };
 
 export default useGithubRepositories;
