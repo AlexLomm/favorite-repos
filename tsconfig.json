@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["@emotion/react/types/css-prop"]
   },
   "include": ["src"],
   "references": [
