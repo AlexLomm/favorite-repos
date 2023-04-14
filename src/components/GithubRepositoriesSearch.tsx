@@ -14,12 +14,18 @@ const GithubRepositoriesSearch = () => {
       sx={{ width: 300 }}
       options={repositories.map(({ id, name }) => ({ id, label: name }))}
       renderInput={(params) => <TextField {...params} label="Repository" />}
-      inputValue={searchQuery}
       loading={isLoading}
       onInputChange={(_, value) => {
         if (!value) return;
 
         setSearchQuery(value);
+      }}
+      renderOption={(props, option) => {
+        return (
+          <li {...props} key={option.id}>
+            {option.label}
+          </li>
+        );
       }}
     />
   );
