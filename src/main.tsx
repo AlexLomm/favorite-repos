@@ -15,6 +15,7 @@ import '@fontsource/roboto/700.css';
 import router from './router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { css, Global } from '@emotion/react';
+import { SnackbarProvider } from 'notistack';
 
 const queryClient = new QueryClient();
 
@@ -28,13 +29,28 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
         body {
           min-height: 100vh;
-          min-width: 100vw;
+          margin: 0;
+          background-color: #bfdfec;
+          background-repeat: repeat-x;
+          background-image: url('/clouds.png');
+          animation: movement 15s linear infinite;
+        }
+
+        @keyframes movement {
+          0% {
+            background-position: 0 0;
+          }
+          100% {
+            background-position: 560px 0;
+          }
         }
       `}
     />
 
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <SnackbarProvider maxSnack={3} autoHideDuration={1000}>
+        <RouterProvider router={router} />
+      </SnackbarProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );
