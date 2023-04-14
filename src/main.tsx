@@ -17,11 +17,21 @@ import './index.css';
 
 import router from './router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { css, Global } from '@emotion/react';
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <Global
+      styles={css`
+        body {
+          min-height: 100vh;
+          min-width: 100vw;
+        }
+      `}
+    />
+
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
     </QueryClientProvider>
