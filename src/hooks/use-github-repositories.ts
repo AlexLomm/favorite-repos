@@ -37,7 +37,9 @@ const useGithubRepositories = (searchQuery: string) => {
     { enabled: false }
   );
 
-  // add debounce to prevent unnecessary requests as the user types
+  // add debounce to prevent unnecessary requests as the user types. Disable the
+  // eslint warning because `debounce` usage causes a false positive
+  //
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedRefetch = useCallback(debounce(refetch, 300), [refetch]);
 
@@ -45,8 +47,6 @@ const useGithubRepositories = (searchQuery: string) => {
   useEffect(() => {
     if (!searchQuery) return;
 
-    // we don't need to await the refetch here, so we can ignore the eslint warning
-    // noinspection JSIgnoredPromiseFromCall
     debouncedRefetch();
   }, [searchQuery, debouncedRefetch]);
 
