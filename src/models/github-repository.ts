@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export interface GithubRepository {
-  id: number;
+  id: string;
   fullName: string;
   description: string;
   language: string;

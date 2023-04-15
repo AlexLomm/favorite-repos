@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { debounce } from '@mui/material';
 
-import getGithubRepositoriesByQuery from '../api/get-github-repositories-by-query';
+import getGithubRepositories from '../api/get-github-repositories';
 import { GithubRepository } from '../models/github-repository';
 
 /**
@@ -26,7 +26,7 @@ const useGithubRepositories = (
 
   const { data, refetch, isFetching } = useQuery<GithubRepository[]>(
     ['searchRepositories', searchQuery],
-    async () => getGithubRepositoriesByQuery(searchQuery),
+    async () => getGithubRepositories(searchQuery),
     { enabled: false }
   );
 

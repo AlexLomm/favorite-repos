@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   CardActionArea,
   CardActions,
@@ -6,25 +7,41 @@ import {
   Chip,
   Typography,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import { ReactComponent as StarIcon } from '../assets/icon-star.svg';
 import { ReactComponent as CodeIcon } from '../assets/icon-code.svg';
-import { GithubRepository } from '../models/github-repository';
 
-interface GithubRepositoriesSearchItemProps {
-  githubRepository: GithubRepository;
-  onClick: (githubRepository: GithubRepository) => void;
+interface RepositoryCardProps {
+  id: string;
+  fullName: string;
+  description?: string;
+  language: string;
+  stargazersCount: number;
+  onClick: (id: string) => void;
+  onRemoveClick?: (id: string) => void;
+  elevation?: number;
 }
 
-const GithubRepositoryCard = ({
-  githubRepository,
+const RepositoryCard = ({
+  id,
+  fullName,
+  description,
+  language,
+  stargazersCount,
   onClick,
-}: GithubRepositoriesSearchItemProps) => {
+  onRemoveClick,
+  elevation,
+}: RepositoryCardProps) => {
   return (
-    <Card elevation={0}>
-      <CardActionArea onClick={() => onClick(githubRepository)}>
+    <Card
+      css={css`
+        width: 100%;
+      `}
+      elevation={elevation}
+    >
+      <CardActionArea onClick={() => onClick(id)}>
         <CardContent>
           <Typography
             gutterBottom
@@ -36,12 +53,14 @@ const GithubRepositoryCard = ({
               text-overflow: ellipsis;
             `}
           >
-            {githubRepository.fullName}
+            {fullName}
           </Typography>
 
-          <Typography gutterBottom variant="body2" color="text.secondary">
-            {githubRepository.description}
-          </Typography>
+          {description && (
+            <Typography gutterBottom variant="body2" color="text.secondary">
+              {description}
+            </Typography>
+          )}
 
           <CardActions style={{ paddingLeft: 0, paddingRight: 0 }}>
             <Chip
@@ -55,7 +74,7 @@ const GithubRepositoryCard = ({
                   `}
                 />
               }
-              label={githubRepository.stargazersCount}
+              label={stargazersCount}
             />
 
             <Chip
@@ -69,13 +88,21 @@ const GithubRepositoryCard = ({
                   `}
                 />
               }
-              label={githubRepository.language}
+              label={language}
             />
           </CardActions>
         </CardContent>
       </CardActionArea>
+
+      {onRemoveClick && (
+        <CardActions>
+          <Button size="small" color="error" onClick={() => onRemoveClick(id)}>
+            Remove
+          </Button>
+        </CardActions>
+      )}
     </Card>
   );
 };
 
-export default GithubRepositoryCard;
+export default RepositoryCard;

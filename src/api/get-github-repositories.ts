@@ -5,7 +5,7 @@ import {
 } from '../models/github-repository';
 import validateSchema from '../utils/validate-schema';
 
-const getGithubRepositoriesByQuery = async (
+const getGithubRepositories = async (
   searchQuery: string
 ): Promise<GithubRepository[]> => {
   const response = await fetch(
@@ -26,4 +26,4 @@ const getGithubRepositoriesByQuery = async (
   return validatedData.items;
 };
 
-export default getGithubRepositoriesByQuery;
+export default getGithubRepositories;
