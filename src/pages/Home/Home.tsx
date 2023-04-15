@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { css } from '@emotion/react';
 import { useSnackbar } from 'notistack';
-import { motion } from 'framer-motion';
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
 
 import GithubRepositoriesSearch from './GithubRepositoriesSearch';
 import useGithubRepositories from '../../hooks/use-github-repositories';
@@ -16,9 +8,9 @@ import addGithubRepositoryToServer from '../../api/add-github-repository-to-serv
 import useGithubRepositoriesFromServer, {
   UseServerRepositoriesProps,
 } from '../../hooks/use-server-repositories';
-import RepositoryCard from '../../components/RepositoryCard';
-import removeServerRepository from '../../api/remove-server-repository';
 import Ghost from '../../components/Ghost';
+import SortingControls from './SortingControls';
+import SavedRepositories from './SavedRepositories';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,20 +18,21 @@ const Home = () => {
     useState<UseServerRepositoriesProps['sortBy']>('createdAt');
 
   const { isLoading, repositories, clear } = useGithubRepositories(searchQuery);
-  const {
-    isLoading: isLoadingServer,
-    repositories: repositoriesServer,
-    refetch,
-  } = useGithubRepositoriesFromServer({ sortBy });
+  const { repositories: repositoriesServer, refetch } =
+    useGithubRepositoriesFromServer({ sortBy });
 
   const { enqueueSnackbar } = useSnackbar();
 
   return (
     <div
       css={css`
-        padding: 216px 32px 56px 32px;
+        padding: 116px 32px 56px 32px;
         max-width: 1200px;
         margin: 0 auto;
+
+        @media (min-height: 896px) {
+          padding-top: 216px;
+        }
       `}
     >
       <div
@@ -103,7 +96,7 @@ const Home = () => {
             }}
           />
 
-          <FormControl
+          <div
             css={css`
               margin-top: 16px;
               width: 300px;
@@ -121,33 +114,11 @@ const Home = () => {
               }
             `}
           >
-            <FormLabel id="sort-by-label">Sort By</FormLabel>
-
-            <RadioGroup
-              row
-              aria-labelledby="sort-by-label"
-              name="row-radio-buttons-group"
-              onChange={(event) => {
-                setSortBy(
-                  event.target.value as UseServerRepositoriesProps['sortBy']
-                );
-              }}
-            >
-              <FormControlLabel
-                value="createdAt"
-                control={<Radio />}
-                label="Date Created"
-                checked={sortBy === 'createdAt'}
-              />
-
-              <FormControlLabel
-                value="stargazersCount"
-                control={<Radio />}
-                label="Stars"
-                checked={sortBy === 'stargazersCount'}
-              />
-            </RadioGroup>
-          </FormControl>
+            <SortingControls
+              selectedSortBy={sortBy}
+              onChange={(value) => setSortBy(value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -155,7 +126,7 @@ const Home = () => {
         css={css`
           pointer-events: none;
           position: absolute;
-          top: 60%;
+          top: max(60%, 450px);
           left: 50%;
           transform: translate(-50%, -50%);
         `}
@@ -184,63 +155,10 @@ const Home = () => {
           }
         `}
       >
-        {repositoriesServer.map((repository) => (
-          <motion.div
-            key={repository.id}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={{
-              hidden: { opacity: 0, translateY: -20 },
-              visible: { opacity: 1, translateY: 0 },
-              exit: { opacity: 0, translateY: 20 },
-            }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            css={css`
-              max-width: 300px;
-
-              @media (min-width: 480px) {
-                max-width: none;
-              }
-            `}
-          >
-            <RepositoryCard
-              id={repository.id}
-              fullName={repository.fullName}
-              language={repository.language}
-              stargazersCount={repository.stargazersCount}
-              onClick={() =>
-                window.open(
-                  `https://github.com/${repository.fullName}`,
-                  '_blank'
-                )
-              }
-              onRemoveClick={async (id) => {
-                try {
-                  const data = await removeServerRepository(id);
-
-                  if (data.ok) {
-                    enqueueSnackbar(
-                      `"${repository.fullName}" removed from server`,
-                      { variant: 'success' }
-                    );
-                  } else {
-                    enqueueSnackbar(
-                      `Oops.. Could not delete "${repository.fullName}" from server: (${data.statusText})`,
-                      { variant: 'error' }
-                    );
-                  }
-                } catch (error) {
-                  enqueueSnackbar(`Oops.. Something went wrong: "${error}"`, {
-                    variant: 'error',
-                  });
-                } finally {
-                  refetch();
-                }
-              }}
-            />
-          </motion.div>
-        ))}
+        <SavedRepositories
+          repositories={repositoriesServer}
+          refetchRepositories={refetch}
+        />
       </div>
     </div>
   );
