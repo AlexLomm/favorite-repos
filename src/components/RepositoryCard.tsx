@@ -17,7 +17,7 @@ interface RepositoryCardProps {
   id: string;
   fullName: string;
   description?: string;
-  language: string;
+  language?: string;
   stargazersCount: number;
   onClick: (id: string) => void;
   onRemoveClick?: (id: string) => void;
@@ -77,19 +77,21 @@ const RepositoryCard = ({
               label={stargazersCount}
             />
 
-            <Chip
-              size="small"
-              icon={
-                <CodeIcon
-                  css={css`
-                    width: 16px;
-                    height: 16px;
-                    margin-bottom: 2px;
-                  `}
-                />
-              }
-              label={language}
-            />
+            {language && (
+              <Chip
+                size="small"
+                icon={
+                  <CodeIcon
+                    css={css`
+                      width: 16px;
+                      height: 16px;
+                      margin-bottom: 2px;
+                    `}
+                  />
+                }
+                label={language}
+              />
+            )}
           </CardActions>
         </CardContent>
       </CardActionArea>

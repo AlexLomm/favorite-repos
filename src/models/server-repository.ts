@@ -4,9 +4,9 @@ export interface ServerRepository {
   id: string;
   fullName: string;
   url: string;
-  language: string;
+  language?: string;
   stargazersCount: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface ServerRepositoriesResponse {
@@ -16,11 +16,11 @@ export interface ServerRepositoriesResponse {
 export const githubRepositoryServerSchema = z.object({
   id: z.string(),
   fullName: z.string(),
-  language: z.string(),
+  language: z.string().nullable(),
   stargazersCount: z.number(),
-  createdAt: z.string(),
+  createdAt: z.string().nullable(),
 });
 
 export const serverRepositoriesResponseSchema = z.object({
-  repos: z.array(githubRepositoryServerSchema),
+  repos: z.array(githubRepositoryServerSchema).nullable(),
 });

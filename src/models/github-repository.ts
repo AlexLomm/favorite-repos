@@ -3,10 +3,10 @@ import { z } from 'zod';
 export interface GithubRepository {
   id: string;
   fullName: string;
-  description: string;
-  language: string;
+  description?: string;
+  language?: string;
   stargazersCount: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface GithubRepositoriesResponse {
@@ -17,10 +17,10 @@ export const githubRepositorySchema = z
   .object({
     id: z.number(),
     full_name: z.string(),
-    description: z.string(),
-    language: z.string(),
+    description: z.string().nullable(),
+    language: z.string().nullable(),
     stargazers_count: z.number(),
-    created_at: z.string(),
+    created_at: z.string().nullable(),
   })
   .transform(
     ({ id, full_name, stargazers_count, created_at, ...otherProps }) => ({
