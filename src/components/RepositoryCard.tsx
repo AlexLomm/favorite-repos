@@ -7,7 +7,7 @@ import {
   Chip,
   Typography,
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { css } from '@emotion/react';
 
 import { ReactComponent as StarIcon } from '../assets/icon-star.svg';

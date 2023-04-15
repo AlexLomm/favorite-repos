@@ -11,7 +11,7 @@ const getGithubRepositories = async (
   const response = await fetch(
     `https://api.github.com/search/repositories?q=${encodeURIComponent(
       searchQuery
-    )}`,
+    )}`
   );
 
   const data = await response.json();
